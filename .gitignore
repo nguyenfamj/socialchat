@@ -1,0 +1,25 @@
+env/
+.env
+*.pyc
+*pot
+*.pyo
+__pycache__
+db.sqlite3
+
+# Python # 
+*.py[cod] 
+*$py.class
+.installed.cfg
+
+# Django #
+bin
+develop-eggs
+dist
+downloads
+eggs
+parts
+src/*.egg-info
+lib
+lib64
+.idea
+.idea/*
