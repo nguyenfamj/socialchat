@@ -2,12 +2,13 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.utils import timezone
+from message_control.models import GenericFileUpload
 
 # Create your models here.
 
 
 class CustomUserManager(BaseUserManager):
-    def _create_user(self, username, password, **extra_fields):
+    def create_user(self, username, password, **extra_fields):
         if not username:
             raise ValueError("Username field is required")
 
@@ -27,12 +28,12 @@ class CustomUserManager(BaseUserManager):
         if extra_fields.get("is_superuser") is not True:
             raise ValueError("Superuser must have is_superuser=True.")
 
-        return self._create_user(username, password, **extra_fields)
+        return self.create_user(username, password, **extra_fields)
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=100, unique=True)
-    emails = models.EmailField(unique=True)
+    email = models.EmailField(unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_staff = models.BooleanField(default=False)
@@ -49,14 +50,20 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         ordering = ("created_at",)
 
 
-# class UserProfile(models.Model):
-#     user = models.OneToOneField(
-#         CustomUser, related_name="user_profile", on_delete=models.CASCADE)
-#     first_name = models.CharField(max_length=100)
-#     last_name = models.CharField(max_length=100)
-#     caption = models.CharField(max_length=250)
-#     about = models.TextField()
-#     profile_picture = models.ForeignKey(GenericFileUpload)
+class UserProfile(models.Model):
+    user = models.OneToOneField(
+        CustomUser, related_name="user_profile", on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    caption = models.CharField(max_length=250)
+    about = models.TextField()
+    profile_picture = models.ForeignKey(
+        GenericFileUpload, related_name="profile_picture", on_delete=models.SET_NULL, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.user.username
 
 
 class Favorite(models.Model):
