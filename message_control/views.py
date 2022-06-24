@@ -72,3 +72,31 @@ class MessageView(ModelViewSet):
         handle_request(serializer)
 
         return Response(serializer.data, status=201)
+
+    def update(self, request, *args, **kwargs):
+
+        try:
+            request.data._mutable = True
+        except:
+            pass
+
+        attachments = request.data.pop("attachments", None)
+        message_instance = self.get_object()
+
+        serializer = self.serializer_class(
+            data=request.data, instance=message_instance, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        MessageAttachment.objects.filter(
+            message_id=message_instance.id).delete()
+
+        if attachments:
+            MessageAttachment.objects.bulk_create(MessageAttachment(
+                **attachment, message_id=message_instance.id) for attachment in attachments)
+
+            message_data = self.get_object()
+            return Response(self.serializer_class(message_data).data, status=200)
+
+        handle_request(serializer)
+        return Response(serializer.data, status=200)

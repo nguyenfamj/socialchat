@@ -168,8 +168,6 @@ class TestUserInfo(APITestCase):
             self.profile_url, data=payload, **self.bearer)
         result = response.json()
 
-        print(result)
-
     def test_update_user_profile(self):
 
         payload = {

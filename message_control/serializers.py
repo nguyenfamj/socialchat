@@ -18,9 +18,9 @@ class MessageAttachmentSerializer(serializers.ModelSerializer):
 
 
 class MessageSerializer(serializers.ModelSerializer):
-    sender = serializers.SerializerMethodField("")
+    sender = serializers.SerializerMethodField("get_sender_data")
     sender_id = serializers.IntegerField(write_only=True)
-    receiver = serializers.SerializerMethodField("")
+    receiver = serializers.SerializerMethodField("get_receiver_data")
     receiver_id = serializers.IntegerField(write_only=True)
     message_attachments = MessageAttachmentSerializer(
         read_only=True, many=True)

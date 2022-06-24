@@ -30,9 +30,9 @@ class Message(models.Model):
 
 class MessageAttachment(models.Model):
     message = models.ForeignKey(
-        Message, related_name="specific_message", on_delete=models.CASCADE)
+        Message, related_name="message_attachments", on_delete=models.CASCADE)
     attachment = models.ForeignKey(
-        GenericFileUpload, related_name="message_upload", on_delete=models.CASCADE)
+        GenericFileUpload, related_name="message_uploads", on_delete=models.CASCADE)
     caption = models.CharField(max_length=255, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
