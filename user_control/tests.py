@@ -197,3 +197,50 @@ class TestUserInfo(APITestCase):
         self.assertEqual(result["first_name"], "Cristiano")
         self.assertEqual(result["last_name"], "Ronaldo")
         self.assertEqual(result["user"]["username"], "nguyenfamj1")
+
+    def test_search_user(self):
+
+        UserProfile.objects.create(
+            user=self.user, first_name="Nguyen", last_name="Pham", caption="This is the caption for this account", about="Full-stack developer")
+
+        user2 = CustomUser.objects.create_user(
+            username="user2", password="user2password", email="user2@gmail.com")
+        UserProfile.objects.create(
+            user=user2, first_name="User2", last_name="Hopkins", caption="This is the caption for this account", about="Full-stack developer")
+
+        user3 = CustomUser.objects.create_user(
+            username="user3", password="user3password", email="user3@gmail.com")
+        UserProfile.objects.create(
+            user=user3, first_name="User3", last_name="Stone", caption="This is the caption for this account", about="Full-stack developer")
+
+        # Keyword = nguyen pham
+        url = self.profile_url + "?keyword=nguyen pham"
+
+        response = self.client.get(url, **self.bearer)
+        result = response.json()["results"]
+        print(result)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(result), 1)
+
+        # Keyword = user2
+        url = self.profile_url + "?keyword=user2"
+
+        response = self.client.get(url, **self.bearer)
+        result = response.json()["results"]
+        print(result)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0]["user"]["username"], "user2")
+        self.assertEqual(result[0]["unseen"], 0)
+
+        # Keyword = user3
+        url = self.profile_url + "?keyword=user3"
+
+        response = self.client.get(url, **self.bearer)
+        result = response.json()["results"]
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0]["user"]["username"], "user3")

@@ -12,9 +12,9 @@ import json
 
 def handle_request(serializer_data):
     notification = {
-        "message": serializer_data.get("message"),
-        "from": serializer_data.get("sender"),
-        "to": serializer_data.get("receiver").get("id"),
+        "message": serializer_data.data.get("message"),
+        "from": serializer_data.data.get("sender"),
+        "to": serializer_data.data.get("receiver").get("id"),
     }
     headers = {
         "Content-Type": "application/json",

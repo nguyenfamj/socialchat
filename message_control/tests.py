@@ -100,7 +100,6 @@ class TestMessage(APITestCase):
         response = self.client.post(self.message_url, data=json.dumps(
             payload), content_type="application/json", **self.bearer)
         result = response.json()
-        print(result)
 
         # Check all tests passed
         self.assertEqual(response.status_code, 201)
@@ -131,4 +130,27 @@ class TestMessage(APITestCase):
         result = response.json()
 
         # Check all tests passed
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(result["message"],
+                         "Hello, this is the new updated message")
+        self.assertEqual(result["is_read"], True)
+
+    def test_delete_message(self):
+        payload = {
+            "sender_id": self.sender.id,
+            "receiver_id": self.receiver.id,
+            "message": "Hi, I am user A",
+        }
+        self.client.post(self.message_url, data=payload, **self.bearer)
+
+        response = self.client.delete(
+            self.message_url+"/1", data=payload, **self.bearer)
+
+        self.assertEqual(response.status_code, 204)
+
+    def test_get_message(self):
+        response = self.client.get(
+            self.message_url+f"?user_id={self.receiver.id}", **self.bearer)
+        result = response.json()
+
         self.assertEqual(response.status_code, 200)

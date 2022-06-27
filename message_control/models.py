@@ -25,7 +25,7 @@ class Message(models.Model):
         return f"Message between {self.sender.username} and {self.receiver.username}"
 
     class Meta:
-        ordering = ("created_at",)
+        ordering = ("-created_at",)
 
 
 class MessageAttachment(models.Model):
