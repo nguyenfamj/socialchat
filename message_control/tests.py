@@ -74,6 +74,26 @@ class TestMessage(APITestCase):
 
     def test_post_message(self):
 
+        payload = {
+            "sender_id": self.sender.id,
+            "receiver_id": self.receiver.id,
+            "message": "test message",
+
+        }
+
+        # processing
+        response = self.client.post(
+            self.message_url, data=payload, **self.bearer)
+        result = response.json()
+
+        # assertions
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(result["message"], "test message")
+        self.assertEqual(result["sender"]["user"]["username"], "UserA")
+        self.assertEqual(result["receiver"]["user"]["username"], "UserB")
+
+    def test_post_message_wfile(self):
+
         avatar = create_image(None, 'avatar.png')
         avatar_file = SimpleUploadedFile('avatar1.png', avatar.getvalue())
         data = {

@@ -218,7 +218,6 @@ class TestUserInfo(APITestCase):
 
         response = self.client.get(url, **self.bearer)
         result = response.json()["results"]
-        print(result)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(result), 1)
@@ -228,7 +227,6 @@ class TestUserInfo(APITestCase):
 
         response = self.client.get(url, **self.bearer)
         result = response.json()["results"]
-        print(result)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(result), 1)
